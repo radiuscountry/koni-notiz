@@ -1,6 +1,6 @@
 // Koni-Notiz: Notiz direkt als Markdown-Datei ins GitHub-Repo radiuscountry/KoniVault ablegen.
 const REPO = "radiuscountry/KoniVault";
-const BRANCH = "main";
+const BRANCH = "master";
 
 const textEl = document.getElementById("text");
 const kontextEl = document.getElementById("kontext");
@@ -15,7 +15,7 @@ document.getElementById("gear").addEventListener("click", () => {
 });
 document.getElementById("close").addEventListener("click", () => settingsEl.close());
 document.getElementById("save").addEventListener("click", () => {
-  localStorage.setItem("gh_token", tokenInputEl.value.trim());
+  localStorage.setItem("gh_token", tokenInputEl.value.replace(/\s+/g, ""));
   settingsEl.close();
 });
 
@@ -56,9 +56,11 @@ sendenEl.addEventListener("click", async () => {
   sendenEl.disabled = true;
   setStatus("Wird gesendet...", "");
 
+  const url = `https://api.github.com/repos/${REPO}/contents/${path}`;
+
   try {
     const res = await fetch(
-      `https://api.github.com/repos/${REPO}/contents/${path}`,
+      url,
       {
         method: "PUT",
         headers: {
@@ -80,7 +82,7 @@ sendenEl.addEventListener("click", async () => {
     } else if (res.status === 401) {
       setStatus("Token ungueltig oder abgelaufen. Im Zahnrad pruefen.", "err");
     } else if (res.status === 404) {
-      setStatus("Repo/Pfad nicht gefunden. Token-Berechtigung pruefen.", "err");
+      setStatus(`404 bei ${url} - Repo/Branch/Pfad oder Token-Berechtigung pruefen.`, "err");
     } else {
       const body = await res.json().catch(() => ({}));
       setStatus(`Fehler ${res.status}: ${body.message || "unbekannt"}`, "err");
