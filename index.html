@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1c1c1e">
+<title>Koni-Notiz</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; height: 100%;
+    background: #1c1c1e; color: #f2f2f7;
+    font-family: -apple-system, system-ui, Roboto, sans-serif;
+  }
+  body {
+    display: flex; flex-direction: column;
+    padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+    min-height: 100vh;
+  }
+  header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 0;
+  }
+  h1 { font-size: 18px; margin: 0; font-weight: 600; }
+  #gear {
+    background: none; border: none; color: #98989f;
+    font-size: 22px; padding: 8px; cursor: pointer;
+  }
+  #text {
+    flex: 1; width: 100%; resize: none;
+    background: #2c2c2e; color: #f2f2f7;
+    border: 1px solid #3a3a3c; border-radius: 12px;
+    padding: 14px; font-size: 19px; line-height: 1.4;
+    min-height: 40vh;
+  }
+  #text:focus { outline: 2px solid #0a84ff; }
+  select#kontext {
+    margin-top: 12px; width: 100%; padding: 12px;
+    background: #2c2c2e; color: #f2f2f7;
+    border: 1px solid #3a3a3c; border-radius: 12px; font-size: 16px;
+  }
+  #senden {
+    margin-top: 12px; width: 100%; padding: 16px;
+    background: #0a84ff; color: white; border: none; border-radius: 12px;
+    font-size: 19px; font-weight: 600; cursor: pointer;
+  }
+  #senden:disabled { opacity: 0.5; }
+  #status { margin-top: 10px; min-height: 20px; font-size: 14px; }
+  #status.ok { color: #30d158; }
+  #status.err { color: #ff453a; }
+  dialog#settings {
+    background: #2c2c2e; color: #f2f2f7; border: none; border-radius: 12px;
+    padding: 20px; width: min(90vw, 400px);
+  }
+  dialog#settings label { display: block; margin-top: 14px; font-size: 14px; color: #98989f; }
+  dialog#settings input {
+    width: 100%; margin-top: 6px; padding: 10px;
+    background: #1c1c1e; color: #f2f2f7; border: 1px solid #3a3a3c;
+    border-radius: 8px; font-size: 15px;
+  }
+  dialog#settings .row { display: flex; gap: 10px; margin-top: 18px; }
+  dialog#settings button {
+    flex: 1; padding: 12px; border-radius: 8px; border: none;
+    font-size: 15px; cursor: pointer;
+  }
+  #save { background: #0a84ff; color: white; }
+  #close { background: #3a3a3c; color: #f2f2f7; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Koni-Notiz</h1>
+    <button id="gear" title="Einstellungen" aria-label="Einstellungen">&#9881;&#65039;</button>
+  </header>
+
+  <textarea id="text" autofocus placeholder="Notiz eintippen oder diktieren..."></textarea>
+
+  <select id="kontext">
+    <option value="">Kein Kontext</option>
+    <option value="Arbeit">Arbeit</option>
+    <option value="Privat">Privat</option>
+    <option value="KMU">KMU</option>
+  </select>
+
+  <button id="senden">Senden</button>
+  <div id="status"></div>
+
+  <dialog id="settings">
+    <h2 style="margin-top:0; font-size:17px;">Einstellungen</h2>
+    <label for="token">GitHub Fine-grained PAT</label>
+    <input id="token" type="password" placeholder="github_pat_...">
+    <div class="row">
+      <button id="close">Schliessen</button>
+      <button id="save">Speichern</button>
+    </div>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
