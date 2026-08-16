@@ -48,10 +48,15 @@ sendenEl.addEventListener("click", async () => {
   const p = zurichParts();
   const path = `Inbox/${p.year}-${p.month}-${p.day}_${p.hour}${p.minute}_notiz.md`;
   const kontext = kontextEl.value;
+  const istTask = kontext === "Tasks";
 
   let content = `# Notiz vom ${p.day}.${p.month}.${p.year} ${p.hour}:${p.minute}\n`;
   if (kontext) content += `Kontext: ${kontext}\n`;
-  content += `\n${text}\n`;
+  if (istTask) content += `Tags: #task\n`;
+  content += "\n";
+  content += istTask
+    ? text.split("\n").filter((z) => z.trim()).map((z) => `- [ ] ${z.trim()}`).join("\n") + "\n"
+    : `${text}\n`;
 
   sendenEl.disabled = true;
   setStatus("Wird gesendet...", "");
