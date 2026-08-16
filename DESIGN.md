@@ -56,6 +56,17 @@ Alle Farben/Groessen nur ueber diese Variablen verwenden.
   /* Abstaende (4er-Raster) */
   --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px;  --sp-4: 16px;
   --sp-5: 20px; --sp-6: 24px;
+
+  /* Seiten-Padding */
+  --pad-page:      16px;      /* einziges Mass fuer den seitlichen Abstand
+                                  zum Screenrand. Kopf, Textfeld-Karte und
+                                  Fussbereich haengen alle direkt am Body
+                                  und erben dieses Padding, damit ihre
+                                  rechten Kanten (Zahnrad, Kamera-Button,
+                                  Select, Senden-Button) fluchten. */
+
+  /* Textur */
+  --dot-grid:      #E8EAEC;   /* Punktraster auf der Textfeld-Karte */
 }
 ```
 
@@ -76,12 +87,22 @@ Alle Farben/Groessen nur ueber diese Variablen verwenden.
 
 ## 4. Komponenten
 
-**Kopf** – schlank, kein Kartenrahmen, verschmilzt mit der Buehne. Titel
-links, Zahnrad-Icon rechts in `--ink-faint`.
+**Kopf** – schlank, kein Kartenrahmen, verschmilzt mit der Buehne. Links das
+Marken-Icon (siehe unten) plus Titel, rechts das Zahnrad-Icon in
+`--ink-faint`. Alle vier Eckpunkte des Screens (Zahnrad rechts oben,
+Kamera-Button rechts, Select/Senden rechts unten) fluchten auf derselben
+Kante, definiert durch `--pad-page`.
+
+**Marken-Icon** – Stiftspitze mit Funke, zwei flache Formen (`fill`, keine
+Outline), Farbe `--brand`. Einzige Ausnahme von der Outline-Icon-Regel: das
+Marken-Icon ist ein Logo/Icon-Zeichen, kein Funktions-Icon.
 
 **Textfeld-Karte** – `--surface`, `--radius-card`, `--shadow-card`,
 Innenabstand `--sp-4`. Nimmt den gesamten verfuegbaren Platz ein (flex: 1).
-Fokus: 2px Rahmen in `--brand`. Randlos innen, kein zusaetzlicher Inner-Rahmen.
+Hintergrund traegt ein sehr dezentes Punktraster (`radial-gradient`,
+`--dot-grid`, Abstand 24px) fuer eine leichte Notizbuch-Anmutung – bewusst
+so hell, dass es den Eingabetext nie stoert. Fokus: 2px Rahmen in `--brand`.
+Randlos innen, kein zusaetzlicher Inner-Rahmen.
 
 **Foto-Button** – Quadrat 48px, `--surface-2`, `--radius-ctl`, Icon in
 `--ink`. Gleiche Flaeche wie das Textfeld, steht daneben.
@@ -103,6 +124,16 @@ Button-Optik wie im Hauptscreen (Konsistenz statt eigener Dialog-Sprache).
 
 **Icons** – Outline-Stil, keine Emoji als UI-Icons (aktuell Emoji im Code;
 im Zuge dieser Ueberarbeitung durch einfache Inline-SVGs ersetzen).
+
+**App-Icon** – abgerundetes Quadrat in `--brand`, zentriert ein weisses
+Notizblatt mit umgeschlagener Ecke (Fold-Flap in `#CBD8D6`) und dem Funke-
+Motiv des Marken-Icons darauf. Flat Design, keine Verlaeufe/Schatten.
+Quelle: `icon-design.svg`. Daraus erzeugt: `icon-192.png`, `icon-512.png`
+(normale Icons, Ecken werden vom OS gerundet/maskiert) und
+`icon-maskable-512.png` (Hintergrund randlos bis zum Rand, Motiv auf ca.
+60% der Flaeche verkleinert fuer Androids Safe-Zone). `favicon.svg`
+verwendet nur das Funke-Motiv auf `--brand`, da das Notizblatt bei 16-32px
+nicht mehr lesbar waere.
 
 ---
 

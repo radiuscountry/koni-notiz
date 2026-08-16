@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#F1F2F4">
 <title>Koni-Notiz</title>
 <link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
@@ -30,6 +31,9 @@
     --radius-card:   18px;
     --radius-ctl:    12px;
     --shadow-card:   0 1px 2px rgba(20,24,32,.05), 0 4px 16px rgba(20,24,32,.06);
+
+    --pad-page:      16px;      /* einheitliches Seiten-Padding, alle Kanten fluchten daran */
+    --dot-grid:      #E8EAEC;   /* Punktraster auf der Textfeld-Karte */
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; }
@@ -37,7 +41,7 @@
     background: var(--bg); color: var(--ink);
     font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
     display: flex; flex-direction: column;
-    padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+    padding: env(safe-area-inset-top) var(--pad-page) env(safe-area-inset-bottom);
     min-height: 100vh;
     min-height: 100dvh;
   }
@@ -46,11 +50,16 @@
     display: flex; justify-content: space-between; align-items: center;
     padding: 12px 0;
   }
+  .brand { display: flex; align-items: center; gap: 8px; }
+  .brand-mark { flex: none; width: 22px; height: 22px; color: var(--brand); }
   h1 { font-size: 17px; margin: 0; font-weight: 600; }
   #gear {
+    flex: none;
     display: flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px;
     background: none; border: none; color: var(--ink-faint);
-    padding: 8px; margin: -8px; cursor: pointer; border-radius: var(--radius-ctl);
+    margin-right: calc(var(--pad-page) * -1 + 8px);
+    cursor: pointer; border-radius: var(--radius-ctl);
   }
   #gear:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--brand); }
   #gear svg { width: 22px; height: 22px; }
@@ -61,7 +70,9 @@
   }
   #text {
     flex: 1; width: 100%; resize: none;
-    background: var(--surface); color: var(--ink);
+    background-color: var(--surface); color: var(--ink);
+    background-image: radial-gradient(circle, var(--dot-grid) 1px, transparent 1.6px);
+    background-size: 24px 24px;
     border: 1px solid var(--line); border-radius: var(--radius-card);
     box-shadow: var(--shadow-card);
     padding: 14px; font-size: 19px; line-height: 1.4;
@@ -138,7 +149,13 @@
 </head>
 <body>
   <header>
-    <h1>Koni-Notiz</h1>
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M4 20 L15 9 L18 12 Z"></path>
+        <path d="M19 2 C19.3 4 20 4.7 22 5 C20 5.3 19.3 6 19 8 C18.7 6 18 5.3 16 5 C18 4.7 18.7 4 19 2 Z"></path>
+      </svg>
+      <h1>Koni-Notiz</h1>
+    </div>
     <button id="gear" type="button" title="Einstellungen" aria-label="Einstellungen">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"></circle>
@@ -148,7 +165,7 @@
   </header>
 
   <div id="textwrap">
-    <textarea id="text" autofocus placeholder="Notiz eintippen oder diktieren..."></textarea>
+    <textarea id="text" autofocus placeholder="Was geht dir durch den Kopf?"></textarea>
     <button id="foto" type="button" title="Notiz fotografieren" aria-label="Notiz fotografieren">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
