@@ -94,6 +94,113 @@ sendenEl.addEventListener("click", async () => {
   }
 });
 
+const fotoEl = document.getElementById("foto");
+const fotoInputEl = document.getElementById("fotoInput");
+
+fotoEl.addEventListener("click", () => fotoInputEl.click());
+
+fotoInputEl.addEventListener("change", async () => {
+  const file = fotoInputEl.files[0];
+  fotoInputEl.value = "";
+  if (!file) return;
+
+  fotoEl.disabled = true;
+  sendenEl.disabled = true;
+  setStatus("Lese Notiz…", "");
+
+  try {
+    const { blob, mediaType } = await verkleinereBild(file);
+    const bild = await blobToBase64(blob);
+
+    const res = await fetch("/api/transkribieren", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ image: bild, mediaType }),
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      setStatus(data.error || `Fehler beim Transkribieren (${res.status}).`, "err");
+      return;
+    }
+
+    const erkannt = (data.text || "").trim();
+    if (!erkannt) { setStatus("Kein Text erkannt.", "err"); return; }
+
+    let neu = erkannt;
+    if (istMindmap(erkannt)) neu += `\n\n${mindmapZuMermaid(erkannt)}`;
+
+    textEl.value = textEl.value.trim() ? `${textEl.value.trim()}\n\n${neu}` : neu;
+    setStatus("Notiz eingelesen ✓", "ok");
+  } catch (e) {
+    setStatus("Kein Netz oder Foto konnte nicht verarbeitet werden. Textfeld unveraendert.", "err");
+  } finally {
+    fotoEl.disabled = false;
+    sendenEl.disabled = false;
+  }
+});
+
+function verkleinereBild(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const maxKante = 1600;
+      const skala = Math.min(1, maxKante / Math.max(img.width, img.height));
+      const breite = Math.round(img.width * skala);
+      const hoehe = Math.round(img.height * skala);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = breite;
+      canvas.height = hoehe;
+      canvas.getContext("2d").drawImage(img, 0, 0, breite, hoehe);
+
+      canvas.toBlob((blob) => {
+        if (!blob) { reject(new Error("Bild konnte nicht verarbeitet werden.")); return; }
+        console.log(`Bild verkleinert: ${file.size} -> ${blob.size} Bytes (${breite}x${hoehe})`);
+        resolve({ blob, mediaType: "image/jpeg" });
+      }, "image/jpeg", 0.8);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Bild konnte nicht geladen werden.")); };
+    img.src = url;
+  });
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(",")[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+function istMindmap(text) {
+  const zeilen = text.split("\n");
+  const hatUeberschrift = /^#\s+/.test(zeilen[0] || "");
+  const hatEinrueckung = zeilen.some((z) => /^\t+[-*]\s+/.test(z));
+  return hatUeberschrift && hatEinrueckung;
+}
+
+function mindmapZuMermaid(text) {
+  const zeilen = text.split("\n").filter((z) => z.trim() && !z.trim().startsWith("→") && !z.trim().startsWith("->"));
+  const titel = (zeilen[0] || "").replace(/^#\s+/, "").trim();
+  const ausgabe = ["mindmap", `  root((${titel}))`];
+
+  for (const zeile of zeilen.slice(1)) {
+    const treffer = zeile.match(/^(\t*)[-*]\s+(.*)$/);
+    if (!treffer) continue;
+    const ebene = treffer[1].length;
+    const inhalt = treffer[2].trim();
+    if (!inhalt) continue;
+    ausgabe.push("  ".repeat(ebene + 2) + inhalt);
+  }
+
+  return "```mermaid\n" + ausgabe.join("\n") + "\n```";
+}
+
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
 }
