@@ -14,6 +14,19 @@ Schritt 2 - Notiztyp erkennen und passend ausgeben:
   Tab-Einrueckung (ein Tab pro Ebene, Punkte beginnen mit "- ").
   Querverbindungen zwischen Aesten als separate Zeile am Schluss im Format
   "-> Verbindung: A <-> B".
+- Flowchart/Diagramm (Kaesten/Formen durch Pfeile oder Linien verbunden, aber
+  KEINE reine Zentrum-Aeste-Struktur - z.B. Ablaufdiagramme, Serverdiagramme,
+  Architekturskizzen): kurze Ueberschrift als "# Ueberschrift" (Titel aus dem
+  Foto, sonst sinnvoll benennen), danach ein einzelner \`\`\`mermaid-Codeblock
+  mit "flowchart TD" (bei klar links-rechts fliessender Skizze "flowchart LR").
+  Darin: Kaesten als Knoten mit Originaltext, z.B. A[Webserver]. Entscheidungs-
+  rauten als B{Frage?}. Pfeilbeschriftungen als -->|Text|. Zylinder/Datenbank-
+  Formen als C[(Name)]. Sonderzeichen, die Mermaid-Syntax brechen (Klammern,
+  Anfuehrungszeichen), im Knotentext in "..."-Anfuehrungszeichen setzen. Nach
+  dem Mermaid-Block optional 1-2 Zeilen "Anmerkungen:", falls das Foto
+  Beschriftungen enthaelt, die sich nicht im Diagramm unterbringen lassen.
+  Keine zusaetzliche Listen-Darstellung - der Mermaid-Block ist hier die
+  einzige Quelle der Wahrheit.
 - Unsichere Zuordnungen mit [?] markieren.
 
 Gib ausschliesslich den reinen Markdown-Text der Transkription zurueck, ohne
