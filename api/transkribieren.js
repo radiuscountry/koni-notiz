@@ -21,10 +21,15 @@ Schritt 2 - Notiztyp erkennen und passend ausgeben:
   mit "flowchart TD" (bei klar links-rechts fliessender Skizze "flowchart LR").
   Darin: Kaesten als Knoten mit Originaltext, z.B. A[Webserver]. Entscheidungs-
   rauten als B{Frage?}. Pfeilbeschriftungen als -->|Text|. Zylinder/Datenbank-
-  Formen als C[(Name)]. Sonderzeichen, die Mermaid-Syntax brechen (Klammern,
-  Anfuehrungszeichen), im Knotentext in "..."-Anfuehrungszeichen setzen. Nach
-  dem Mermaid-Block optional 1-2 Zeilen "Anmerkungen:", falls das Foto
-  Beschriftungen enthaelt, die sich nicht im Diagramm unterbringen lassen.
+  Formen als C[(Name)]. Ovale/abgerundete Formen (z.B. handgezeichnete Start-/
+  Ende-Knoten) als A([Text]), Kreise als A((Text)). Verbindungen ohne
+  Pfeilspitzen (blosse Linien zwischen Begriffen, z.B. in Begriffsnetzen) als
+  A --- B, mit Beschriftung als A ---|Text| B - Pfeile weiterhin nur dort, wo
+  die Skizze wirklich eine Richtung zeigt. Sonderzeichen, die Mermaid-Syntax
+  brechen (Klammern, Anfuehrungszeichen), im Knotentext in "..."-Anfuehrungs-
+  zeichen setzen. Nach dem Mermaid-Block optional 1-2 Zeilen "Anmerkungen:",
+  falls das Foto Beschriftungen enthaelt, die sich nicht im Diagramm
+  unterbringen lassen.
   Keine zusaetzliche Listen-Darstellung - der Mermaid-Block ist hier die
   einzige Quelle der Wahrheit.
 - Unsichere Zuordnungen mit [?] markieren.
