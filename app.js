@@ -2,6 +2,19 @@
 const REPO = "radiuscountry/KoniVault";
 const BRANCH = "master";
 
+// Kategorie aus dem Dropdown -> Unterordner in der Inbox.
+// Die Ordnernamen entsprechen den Top-Ordnern im Vault, damit die Inbox-Verarbeitung
+// den Bereich mechanisch ableiten kann statt zu raten. Neue Kategorie = Eintrag hier
+// und eine <option> in index.html; ohne Eintrag landet die Notiz direkt in Inbox/.
+const INBOX_ORDNER = {
+  "soH": "soH",
+  "KMU": "KMU",
+  "Privat": "Privat",
+  "Wissen": "Wissen",
+  "Tasks": "Tasks",
+  "Fragen an Dani": "FragenDani",
+};
+
 const textEl = document.getElementById("text");
 const kontextEl = document.getElementById("kontext");
 const sendenEl = document.getElementById("senden");
@@ -46,9 +59,10 @@ sendenEl.addEventListener("click", async () => {
   if (!token) { setStatus("Kein Token hinterlegt. Zahnrad oben rechts.", "err"); return; }
 
   const p = zurichParts();
-  const path = `Inbox/${p.year}-${p.month}-${p.day}_${p.hour}${p.minute}_notiz.md`;
   const kontext = kontextEl.value;
   const istTask = kontext === "Tasks";
+  const unterordner = INBOX_ORDNER[kontext] ? `${INBOX_ORDNER[kontext]}/` : "";
+  const path = `Inbox/${unterordner}${p.year}-${p.month}-${p.day}_${p.hour}${p.minute}_notiz.md`;
 
   let content = `# Notiz vom ${p.day}.${p.month}.${p.year} ${p.hour}:${p.minute}\n`;
   if (kontext) content += `Kontext: ${kontext}\n`;
