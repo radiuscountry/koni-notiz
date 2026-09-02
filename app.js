@@ -68,8 +68,8 @@ sendenEl.addEventListener("click", async () => {
   if (kontext) content += `Kontext: ${kontext}\n`;
   if (istTask) content += `Tags: #task\n`;
   content += "\n";
-  content += istTask
-    ? text.split("\n").filter((z) => z.trim()).map((z) => `- [ ] ${z.trim()}`).join("\n") + "\n"
+  content += istTask && !istStruktur(text)
+    ? `${alsTasks(text)}\n`
     : `${text}\n`;
 
   sendenEl.disabled = true;
@@ -194,6 +194,29 @@ function blobToBase64(blob) {
     reader.onerror = reject;
     reader.readAsDataURL(blob);
   });
+}
+
+// Struktur-Notizen (Mindmap-Liste oder Mermaid-Block) duerfen nicht in Checkboxen
+// zerlegt werden: der Block ist im Vault die Quelle fuer die Diagramm-Konvertierung
+// (tools/mindmap-konvertieren.js, Strg+M) und waere danach unbrauchbar.
+function istStruktur(text) {
+  return /^```mermaid\s*$/m.test(text) || istMindmap(text);
+}
+
+// Freitext in Checkboxen umwandeln - eine Aufgabe pro nicht-leerer Zeile.
+// Ueberschriften bleiben Ueberschriften, bereits gesetzte Checkboxen unangetastet,
+// und ein vorhandenes Listenzeichen wird ersetzt statt verdoppelt ("- [ ] - Punkt").
+function alsTasks(text) {
+  return text
+    .split("\n")
+    .filter((z) => z.trim())
+    .map((z) => {
+      const zeile = z.trim();
+      if (/^#{1,6}\s/.test(zeile)) return zeile;
+      if (/^[-*]\s*\[[ xX]\]/.test(zeile)) return zeile;
+      return `- [ ] ${zeile.replace(/^[-*]\s+/, "")}`;
+    })
+    .join("\n");
 }
 
 function istMindmap(text) {
